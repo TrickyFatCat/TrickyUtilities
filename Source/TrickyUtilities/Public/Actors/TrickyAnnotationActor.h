@@ -125,6 +125,4 @@ private:
 
 	UFUNCTION()
 	void SetupComponent(UPrimitiveComponent* Component) const;
-
-
 };
