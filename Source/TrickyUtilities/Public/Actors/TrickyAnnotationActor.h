@@ -11,6 +11,10 @@ enum EHorizTextAligment : int;
 enum EVerticalTextAligment : int;
 class UTextRenderComponent;
 
+/**
+ * A customizable annotation actor used for displaying a custom text.
+ * Useful to create annotations in levels.
+ */
 UCLASS(HideCategories=(Actor, Collision, Input, Replication, HLOD, WorldPartition, DataLayers, Physics,
 	Networking, LevelInstance))
 class TRICKYUTILITIES_API ATrickyAnnotationActor : public AActor
@@ -49,6 +53,9 @@ protected:
 	UPROPERTY()
 	TObjectPtr<UTextRenderComponent> BackTextComponent = nullptr;
 
+	/**
+	 * Text content displayed by the actor.
+	 */
 	UPROPERTY(EditAnywhere,
 		BlueprintGetter=GetAnnotationText,
 		BlueprintSetter=SetAnnotationText,
@@ -56,12 +63,18 @@ protected:
 		meta=(MultiLine))
 	FText AnnotationText = FText::FromString("Annotation Text");
 
+	/**
+	 * Determines size of the annotation text.
+	 */
 	UPROPERTY(EditAnywhere,
 		BlueprintReadOnly,
 		Category = "TrickyAnnotation",
 		meta=(ClampMin=1, UIMin=1, ClampMax=128, UIMax=128))
 	int32 TextSize = 32;
 
+	/**
+	 * Determines annotation text color.
+	 */
 	UPROPERTY(EditAnywhere,
 		BlueprintGetter=GetTextColor,
 		BlueprintSetter=SetTextColor,
@@ -69,12 +82,21 @@ protected:
 		meta=(HideAlphaChannel))
 	FColor TextColor = FColor::White;
 
+	/**
+	 * Text vertical alignment.
+	 */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "TrickyAnnotation")
 	TEnumAsByte<EVerticalTextAligment> VerticalAlignment = EVerticalTextAligment::EVRTA_TextCenter;
 
+	/**
+	 * Text horizontal alignment.
+	 */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "TrickyAnnotation")
 	TEnumAsByte<EHorizTextAligment> HorizontalAlignment = EHorizTextAligment::EHTA_Center;
 
+	/**
+	 * Determines text material.
+	 */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "TrickyAnnotation", AdvancedDisplay)
 	UMaterialInterface* TextMaterial = nullptr;
 
