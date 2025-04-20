@@ -19,6 +19,16 @@ enum class ETimeFormat : uint8
 	SS UMETA(DisplayName="SS")
 };
 
+UENUM()
+enum class ERingPointDirection : uint8
+{
+	Normal UMETA(DisplayName="Normal"),
+	Clockwise UMETA(DisplayName="Clockwise"),
+	CounterClockwise UMETA(DisplayName="CounterClockwise"),
+	Inside UMETA(DisplayName="Inside"),
+	Outside UMETA(DisplayName="Outside")
+};
+
 /**
  * 
  */
@@ -49,5 +59,56 @@ public:
 	 * @param OutResult A reference to a string where the formatted time will be stored.
 	 */
 	UFUNCTION(BlueprintPure, Category="TrickyUtilities")
-	static void FormatTimeSeconds(const float TimeSeconds, const ETimeFormat TimeFormat, FString& OutResult);	
+	static void FormatTimeSeconds(const float TimeSeconds, const ETimeFormat TimeFormat, FString& OutResult);
+
+	UFUNCTION(BlueprintCallable, Category="TrickyUtilities", meta=(AutoCreateRefTerm="CellSize"))
+	static void CalculateGridTransforms(const FTransform& Origin,
+	                                    const int32 SizeX,
+	                                    const int32 SizeY,
+	                                    const FVector2D& CellSize,
+	                                    TArray<FTransform>& OutTransforms);
+
+	UFUNCTION(BlueprintCallable, Category="TrickyUtilities", meta=(AutoCreateRefTerm="CellSize"))
+	static void CalculateCubeTransforms(const FTransform& Origin,
+	                                    const int32 SizeX,
+	                                    const int32 SizeY,
+	                                    const int32 SizeZ,
+	                                    const FVector& CellSize,
+	                                    TArray<FTransform>& OutTransforms);
+
+	UFUNCTION(BlueprintCallable, Category="TrickyUtilities")
+	static void CalculateRingTransform(const FTransform& Origin,
+	                                   const int32 PointsAmount,
+	                                   const float Radius,
+	                                   const ERingPointDirection Direction,
+	                                   TArray<FTransform>& OutTransforms);
+
+	UFUNCTION(BlueprintCallable, Category="TrickyUtilities")
+	static void CalculateCylinderTransforms(const FTransform& Origin,
+	                                        const int32 RingsAmount,
+	                                        const int32 PointsAmount,
+	                                        const float Radius,
+	                                        const float Height,
+	                                        const float RingDeltaAngle,
+	                                        const ERingPointDirection Direction,
+	                                        TArray<FTransform>& OutTransforms);
+
+	UFUNCTION(BlueprintCallable, Category="TrickyUtilities")
+	static void CalculateArcTransforms(const FTransform& Origin,
+	                                   const int32 PointsAmount,
+	                                   const float Radius,
+	                                   const float AngleDeg,
+	                                   const ERingPointDirection Direction,
+	                                   TArray<FTransform>& OutTransforms);
+
+
+	UFUNCTION(BlueprintCallable, Category="TrickyUtilities")
+	static void CalculateArcCylinderTransforms(const FTransform& Origin,
+	                                           const int32 ArcsAmount,
+	                                           const int32 PointsAmount,
+	                                           const float Radius,
+	                                           const float Height,
+	                                           const float AngleDeg,
+	                                           const ERingPointDirection Direction,
+	                                           TArray<FTransform>& OutTransforms);
 };
