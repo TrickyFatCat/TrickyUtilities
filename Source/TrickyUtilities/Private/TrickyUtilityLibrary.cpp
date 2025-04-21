@@ -248,7 +248,6 @@ void UTrickyUtilityLibrary::CalculateDynamicConcentricRingsTransforms(const FTra
 		TArray<FTransform> RingTransforms;
 		const float RingRadius = MinRadius + RadiusStep * i;
 
-		// Scale points based on the ring's circumference ratio
 		int32 PointsAmount = MinPoints;
 		if (i > 0 && MinRadius > 0.f)
 		{
@@ -372,6 +371,45 @@ void UTrickyUtilityLibrary::CalculateConcentricArcsTransforms(const FTransform& 
 		TArray<FTransform> RingTransforms;
 		const float ArcRadius = MinRadius + RadiusStep * i;
 		CalculateArcTransforms(Origin, PointsPerArc, ArcRadius, AngleDeg, Direction, RingTransforms);
+		OutTransforms.Append(RingTransforms);
+	}
+}
+
+void UTrickyUtilityLibrary::CalculateDynamicConcentricArcsTransforms(const FTransform& Origin,
+                                                                     const int32 ArcsAmount,
+                                                                     const int32 MinPoints,
+                                                                     const int32 MaxPoints,
+                                                                     const float MinRadius,
+                                                                     const float MaxRadius,
+                                                                     const float AngleDeg,
+                                                                     const EPointDirection Direction,
+                                                                     TArray<FTransform>& OutTransforms)
+{
+	if (ArcsAmount <= 0 || MinPoints <= 0 || MaxPoints <= MinPoints || MinRadius < 0.f || MaxRadius <= MinRadius)
+	{
+		return;
+	}
+
+	if (OutTransforms.Num() > 0)
+	{
+		OutTransforms.Empty();
+	}
+
+	const float RadiusStep = (MaxRadius - MinRadius) / (ArcsAmount - 1);
+	for (int32 i = 0; i < ArcsAmount; ++i)
+	{
+		TArray<FTransform> RingTransforms;
+		const float ArcRadius = MinRadius + RadiusStep * i;
+		
+		int32 PointsAmount = MinPoints;
+		
+		if (i > 0 && MinRadius > 0.f)
+		{
+			const float CircumferenceRatio = ArcRadius / MinRadius;
+			PointsAmount = FMath::Clamp(FMath::RoundToInt(MinPoints * CircumferenceRatio), MinPoints, MaxPoints);
+		}
+		
+		CalculateArcTransforms(Origin, PointsAmount, ArcRadius, AngleDeg, Direction, RingTransforms);
 		OutTransforms.Append(RingTransforms);
 	}
 }

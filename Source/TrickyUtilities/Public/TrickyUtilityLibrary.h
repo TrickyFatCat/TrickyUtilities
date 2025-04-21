@@ -132,6 +132,18 @@ public:
 	                                              const EPointDirection Direction,
 	                                              TArray<FTransform>& OutTransforms);
 
+
+	UFUNCTION(BlueprintCallable, Category="TrickyUtilities")
+	static void CalculateDynamicConcentricArcsTransforms(const FTransform& Origin,
+	                                                     const int32 ArcsAmount,
+	                                                     const int32 MinPoints,
+	                                                     const int32 MaxPoints,
+	                                                     const float MinRadius,
+	                                                     const float MaxRadius,
+	                                                     const float AngleDeg,
+	                                                     const EPointDirection Direction,
+	                                                     TArray<FTransform>& OutTransforms);
+
 	UFUNCTION(BlueprintCallable, Category="TrickyUtilities")
 	static void CalculateArcCylinderTransforms(const FTransform& Origin,
 	                                           const int32 ArcsAmount,
