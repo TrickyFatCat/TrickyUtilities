@@ -121,4 +121,10 @@ public:
 	                                      const float MaxLongitude,
 	                                      const EPointDirection Direction,
 	                                      TArray<FTransform>& OutTransforms);
+
+private:
+	static void CalculatePointRotation(const FTransform& Origin,
+	                                   const FTransform& Point,
+	                                   const EPointDirection Direction,
+	                                   FRotator& OutRotation);
 };
