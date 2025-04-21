@@ -175,6 +175,44 @@ void UTrickyUtilityLibrary::CalculateRingTransform(const FTransform& Origin,
 	}
 }
 
+void UTrickyUtilityLibrary::CalculateConcentricRingsTransforms(const FTransform& Origin,
+                                                               const int32 RingsAmount,
+                                                               const int32 PointsPerRing,
+                                                               const float MinRadius,
+                                                               const float MaxRadius,
+                                                               const float RingDeltaAngle,
+                                                               const EPointDirection Direction,
+                                                               TArray<FTransform>& OutTransforms)
+{
+	if (RingsAmount <= 0 || PointsPerRing <= 0 || MinRadius < 0.f || MaxRadius <= MinRadius)
+	{
+		return;
+	}
+
+	if (OutTransforms.Num() > 0)
+	{
+		OutTransforms.Empty();
+	}
+
+	const float RadiusStep = (MaxRadius - MinRadius) / (RingsAmount - 1);
+	FTransform RingOrigin = Origin;
+	const FVector OriginFwdVector = RingOrigin.GetRotation().GetForwardVector();
+	const FVector OriginUpVector = RingOrigin.GetRotation().GetUpVector();
+
+	for (int32 i = 0; i < RingsAmount; ++i)
+	{
+		const FVector XAxis = OriginFwdVector.RotateAngleAxis(RingDeltaAngle * i, OriginUpVector);
+		const FMatrix RotationMatrix = FRotationMatrix::MakeFromXZ(XAxis, OriginUpVector);
+		const FRotator PointRotation = RotationMatrix.Rotator();
+		RingOrigin.SetRotation(PointRotation.Quaternion());
+		
+		TArray<FTransform> RingTransforms;
+		const float RingRadius = MinRadius + RadiusStep * i;
+		CalculateRingTransform(Origin, PointsPerRing, RingRadius, Direction, RingTransforms);
+		OutTransforms.Append(RingTransforms);
+	}
+}
+
 void UTrickyUtilityLibrary::CalculateCylinderTransforms(const FTransform& Origin,
                                                         const int32 RingsAmount,
                                                         const int32 PointsAmount,
