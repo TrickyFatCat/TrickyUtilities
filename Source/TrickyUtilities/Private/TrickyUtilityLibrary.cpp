@@ -142,7 +142,7 @@ void UTrickyUtilityLibrary::CalculateCubeTransforms(const FTransform& Origin,
 void UTrickyUtilityLibrary::CalculateRingTransform(const FTransform& Origin,
                                                    const int32 PointsAmount,
                                                    const float Radius,
-                                                   const ERingPointDirection Direction,
+                                                   const EPointDirection Direction,
                                                    TArray<FTransform>& OutTransforms)
 {
 	if (PointsAmount <= 0 || Radius < 0.f)
@@ -175,10 +175,10 @@ void UTrickyUtilityLibrary::CalculateRingTransform(const FTransform& Origin,
 
 		switch (Direction)
 		{
-		case ERingPointDirection::Normal:
+		case EPointDirection::Origin:
 			NewTransform.SetRotation(Origin.GetRotation());
 			break;
-		case ERingPointDirection::Clockwise:
+		case EPointDirection::Clockwise:
 			{
 				const FVector TangentVector = FVector::CrossProduct(WorldUpVector, DirectionToOrigin);
 				const FMatrix RotationMatrix = FRotationMatrix::MakeFromXZ(TangentVector, WorldUpVector);
@@ -186,7 +186,7 @@ void UTrickyUtilityLibrary::CalculateRingTransform(const FTransform& Origin,
 				NewTransform.SetRotation(PointRotation.Quaternion());
 			}
 			break;
-		case ERingPointDirection::CounterClockwise:
+		case EPointDirection::CounterClockwise:
 			{
 				const FVector TangentVector = FVector::CrossProduct(DirectionToOrigin, WorldUpVector);
 				const FMatrix RotationMatrix = FRotationMatrix::MakeFromXZ(TangentVector, WorldUpVector);
@@ -194,7 +194,7 @@ void UTrickyUtilityLibrary::CalculateRingTransform(const FTransform& Origin,
 				NewTransform.SetRotation(PointRotation.Quaternion());
 			}
 			break;
-		case ERingPointDirection::Inside:
+		case EPointDirection::Inside:
 			{
 				DirectionToOrigin = OriginLocation - WorldLocation;
 				DirectionToOrigin.Normalize();
@@ -203,7 +203,7 @@ void UTrickyUtilityLibrary::CalculateRingTransform(const FTransform& Origin,
 				NewTransform.SetRotation(PointRotation.Quaternion());
 			}
 			break;
-		case ERingPointDirection::Outside:
+		case EPointDirection::Outside:
 			{
 				const FMatrix RotationMatrix = FRotationMatrix::MakeFromXZ(DirectionToOrigin, WorldUpVector);
 				const FRotator PointRotation = RotationMatrix.Rotator();
@@ -225,7 +225,7 @@ void UTrickyUtilityLibrary::CalculateCylinderTransforms(const FTransform& Origin
                                                         const float Radius,
                                                         const float Height,
                                                         const float RingDeltaAngle,
-                                                        const ERingPointDirection Direction,
+                                                        const EPointDirection Direction,
                                                         TArray<FTransform>& OutTransforms)
 {
 	if (RingsAmount <= 0 || PointsAmount <= 0 || Radius < 0.f || Height < 0.f)
@@ -261,7 +261,7 @@ void UTrickyUtilityLibrary::CalculateArcTransforms(const FTransform& Origin,
                                                    const int32 PointsAmount,
                                                    const float Radius,
                                                    const float AngleDeg,
-                                                   const ERingPointDirection Direction,
+                                                   const EPointDirection Direction,
                                                    TArray<FTransform>& OutTransforms)
 {
 	if (PointsAmount <= 0 || Radius < 0.f || AngleDeg < 0.f)
@@ -304,10 +304,10 @@ void UTrickyUtilityLibrary::CalculateArcTransforms(const FTransform& Origin,
 
 		switch (Direction)
 		{
-		case ERingPointDirection::Normal:
+		case EPointDirection::Origin:
 			NewTransform.SetRotation(ArcOrigin.GetRotation());
 			break;
-		case ERingPointDirection::Clockwise:
+		case EPointDirection::Clockwise:
 			{
 				const FVector TangentVector = FVector::CrossProduct(WorldUpVector, DirectionToOrigin);
 				const FMatrix RotationMatrix = FRotationMatrix::MakeFromXZ(TangentVector, WorldUpVector);
@@ -315,7 +315,7 @@ void UTrickyUtilityLibrary::CalculateArcTransforms(const FTransform& Origin,
 				NewTransform.SetRotation(PointRotation.Quaternion());
 			}
 			break;
-		case ERingPointDirection::CounterClockwise:
+		case EPointDirection::CounterClockwise:
 			{
 				const FVector TangentVector = FVector::CrossProduct(DirectionToOrigin, WorldUpVector);
 				const FMatrix RotationMatrix = FRotationMatrix::MakeFromXZ(TangentVector, WorldUpVector);
@@ -323,7 +323,7 @@ void UTrickyUtilityLibrary::CalculateArcTransforms(const FTransform& Origin,
 				NewTransform.SetRotation(PointRotation.Quaternion());
 			}
 			break;
-		case ERingPointDirection::Inside:
+		case EPointDirection::Inside:
 			{
 				DirectionToOrigin = OriginLocation - WorldLocation;
 				DirectionToOrigin.Normalize();
@@ -332,7 +332,7 @@ void UTrickyUtilityLibrary::CalculateArcTransforms(const FTransform& Origin,
 				NewTransform.SetRotation(PointRotation.Quaternion());
 			}
 			break;
-		case ERingPointDirection::Outside:
+		case EPointDirection::Outside:
 			{
 				const FMatrix RotationMatrix = FRotationMatrix::MakeFromXZ(DirectionToOrigin, WorldUpVector);
 				const FRotator PointRotation = RotationMatrix.Rotator();
@@ -354,7 +354,7 @@ void UTrickyUtilityLibrary::CalculateArcCylinderTransforms(const FTransform& Ori
                                                            const float Radius,
                                                            const float Height,
                                                            const float AngleDeg,
-                                                           const ERingPointDirection Direction,
+                                                           const EPointDirection Direction,
                                                            TArray<FTransform>& OutTransforms)
 {
 	if (ArcsAmount <= 0 || PointsAmount <= 0 || Radius < 0.f || Height < 0.f)
@@ -378,5 +378,109 @@ void UTrickyUtilityLibrary::CalculateArcCylinderTransforms(const FTransform& Ori
 		RingOrigin.SetLocation(OriginLocation + OriginUpVector * ArcDisplacement * i);
 		CalculateArcTransforms(RingOrigin, PointsAmount, Radius, AngleDeg, Direction, ArcsTransforms);
 		OutTransforms.Append(ArcsTransforms);
+	}
+}
+
+void UTrickyUtilityLibrary::CalculateSphereTransforms(const FTransform& Origin,
+                                                      const float Radius,
+                                                      const int32 PointsAmount,
+                                                      const float MinLatitude,
+                                                      const float MaxLatitude,
+                                                      const float MinLongitude,
+                                                      const float MaxLongitude,
+                                                      const EPointDirection Direction,
+                                                      TArray<FTransform>& OutTransforms)
+{
+	if (PointsAmount <= 0 || Radius < 0.f)
+	{
+		return;
+	}
+
+	if (OutTransforms.Num() > 0)
+	{
+		OutTransforms.Empty();
+	}
+
+	const FVector OriginLocation = Origin.GetLocation();
+	const FVector WorldUpVector = Origin.GetRotation().GetUpVector();
+
+	const float Phi = PI * (3.f - FMath::Sqrt(5.f));
+	constexpr float Tau = PI * 2;
+
+	const float MinLongitudeAngle = MinLongitude * 360.f;
+	const float MaxLongitudeAngle = MaxLongitude * 360.f;
+	const float MinLongitudeRad = FMath::DegreesToRadians(MinLongitudeAngle);
+	const float MaxLongitudeRad = FMath::DegreesToRadians(MaxLongitudeAngle);
+
+	FTransform NewTransform = FTransform::Identity;
+
+	for (int32 i = 0; i < PointsAmount; ++i)
+	{
+		const float Z = ((i / (static_cast<float>(PointsAmount) - 1.f)) * (MaxLatitude - MinLatitude) + MinLatitude) *
+			2.f - 1.f;
+		const float RadiusZ = FMath::Sqrt(1.f - Z * Z);
+		float Theta = Phi * static_cast<float>(i);
+
+		if (MinLongitudeAngle != 0.f || MaxLongitudeAngle != 360.f)
+		{
+			Theta = FMath::Fmod(Theta, Tau);
+			Theta = Theta < 0 ? Theta + Tau : Theta;
+			Theta = Theta * MaxLongitudeRad / Tau + MinLongitudeRad;
+		}
+
+		const float X = FMath::Sin(Theta) * RadiusZ;
+		const float Y = FMath::Cos(Theta) * RadiusZ;
+
+		FVector Location{X, Y, Z};
+		Location *= Radius;
+		Location = Origin.TransformPosition(Location);
+		NewTransform.SetLocation(Location);
+		
+		FVector DirectionToOrigin = Location - OriginLocation;
+
+		switch (Direction)
+		{
+		case EPointDirection::Origin:
+			NewTransform.SetRotation(Origin.GetRotation());
+			break;
+		case EPointDirection::Clockwise:
+			{
+				const FVector TangentVector = FVector::CrossProduct(WorldUpVector, DirectionToOrigin);
+				const FMatrix RotationMatrix = FRotationMatrix::MakeFromXZ(TangentVector, WorldUpVector);
+				const FRotator PointRotation = RotationMatrix.Rotator();
+				NewTransform.SetRotation(PointRotation.Quaternion());
+			}
+			break;
+	
+		case EPointDirection::CounterClockwise:
+			{
+				const FVector TangentVector = FVector::CrossProduct(DirectionToOrigin, WorldUpVector);
+				const FMatrix RotationMatrix = FRotationMatrix::MakeFromXZ(TangentVector, WorldUpVector);
+				const FRotator PointRotation = RotationMatrix.Rotator();
+				NewTransform.SetRotation(PointRotation.Quaternion());
+			}
+			break;
+		case EPointDirection::Inside:
+			{
+				DirectionToOrigin = OriginLocation - Location;
+				DirectionToOrigin.Normalize();
+				const FMatrix RotationMatrix = FRotationMatrix::MakeFromXZ(DirectionToOrigin, WorldUpVector);
+				const FRotator PointRotation = RotationMatrix.Rotator();
+				NewTransform.SetRotation(PointRotation.Quaternion());
+			}
+			break;
+		case EPointDirection::Outside:
+			{
+				const FMatrix RotationMatrix = FRotationMatrix::MakeFromXZ(DirectionToOrigin, WorldUpVector);
+				const FRotator PointRotation = RotationMatrix.Rotator();
+				NewTransform.SetRotation(PointRotation.Quaternion());
+			}
+			break;
+		default:
+			NewTransform.SetRotation(Origin.GetRotation());
+			break;
+
+		}
+		OutTransforms.Add(NewTransform);
 	}
 }

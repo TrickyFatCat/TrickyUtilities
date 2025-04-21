@@ -20,9 +20,9 @@ enum class ETimeFormat : uint8
 };
 
 UENUM()
-enum class ERingPointDirection : uint8
+enum class EPointDirection : uint8
 {
-	Normal UMETA(DisplayName="Normal"),
+	Origin UMETA(DisplayName="Origin"),
 	Clockwise UMETA(DisplayName="Clockwise"),
 	CounterClockwise UMETA(DisplayName="CounterClockwise"),
 	Inside UMETA(DisplayName="Inside"),
@@ -80,7 +80,7 @@ public:
 	static void CalculateRingTransform(const FTransform& Origin,
 	                                   const int32 PointsAmount,
 	                                   const float Radius,
-	                                   const ERingPointDirection Direction,
+	                                   const EPointDirection Direction,
 	                                   TArray<FTransform>& OutTransforms);
 
 	UFUNCTION(BlueprintCallable, Category="TrickyUtilities")
@@ -90,7 +90,7 @@ public:
 	                                        const float Radius,
 	                                        const float Height,
 	                                        const float RingDeltaAngle,
-	                                        const ERingPointDirection Direction,
+	                                        const EPointDirection Direction,
 	                                        TArray<FTransform>& OutTransforms);
 
 	UFUNCTION(BlueprintCallable, Category="TrickyUtilities")
@@ -98,9 +98,8 @@ public:
 	                                   const int32 PointsAmount,
 	                                   const float Radius,
 	                                   const float AngleDeg,
-	                                   const ERingPointDirection Direction,
+	                                   const EPointDirection Direction,
 	                                   TArray<FTransform>& OutTransforms);
-
 
 	UFUNCTION(BlueprintCallable, Category="TrickyUtilities")
 	static void CalculateArcCylinderTransforms(const FTransform& Origin,
@@ -109,6 +108,17 @@ public:
 	                                           const float Radius,
 	                                           const float Height,
 	                                           const float AngleDeg,
-	                                           const ERingPointDirection Direction,
+	                                           const EPointDirection Direction,
 	                                           TArray<FTransform>& OutTransforms);
+
+	UFUNCTION(BlueprintCallable, Category="TrickyUtilities")
+	static void CalculateSphereTransforms(const FTransform& Origin,
+	                                      const float Radius,
+	                                      const int32 PointsAmount,
+	                                      const float MinLatitude,
+	                                      const float MaxLatitude,
+	                                      const float MinLongitude,
+	                                      const float MaxLongitude,
+	                                      const EPointDirection Direction,
+	                                      TArray<FTransform>& OutTransforms);
 };
