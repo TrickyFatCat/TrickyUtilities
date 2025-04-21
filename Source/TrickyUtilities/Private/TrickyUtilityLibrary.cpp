@@ -213,6 +213,54 @@ void UTrickyUtilityLibrary::CalculateConcentricRingsTransforms(const FTransform&
 	}
 }
 
+void UTrickyUtilityLibrary::CalculateDynamicConcentricRingsTransforms(const FTransform& Origin,
+                                                                      const int32 RingsAmount,
+                                                                      const int32 MinPoints,
+                                                                      const int32 MaxPoints,
+                                                                      const float MinRadius,
+                                                                      const float MaxRadius,
+                                                                      const float RingDeltaAngle,
+                                                                      const EPointDirection Direction,
+                                                                      TArray<FTransform>& OutTransforms)
+{
+	if (RingsAmount <= 0 || MinPoints <= 0 || MaxPoints <= MinPoints || MinRadius < 0.f || MaxRadius <= MinRadius)
+	{
+		return;
+	}
+
+	if (OutTransforms.Num() > 0)
+	{
+		OutTransforms.Empty();
+	}
+
+	const float RadiusStep = (MaxRadius - MinRadius) / (RingsAmount - 1);
+	FTransform RingOrigin = Origin;
+	const FVector OriginFwdVector = RingOrigin.GetRotation().GetForwardVector();
+	const FVector OriginUpVector = RingOrigin.GetRotation().GetUpVector();
+
+	for (int32 i = 0; i < RingsAmount; ++i)
+	{
+		const FVector XAxis = OriginFwdVector.RotateAngleAxis(RingDeltaAngle * i, OriginUpVector);
+		const FMatrix RotationMatrix = FRotationMatrix::MakeFromXZ(XAxis, OriginUpVector);
+		const FRotator PointRotation = RotationMatrix.Rotator();
+		RingOrigin.SetRotation(PointRotation.Quaternion());
+
+		TArray<FTransform> RingTransforms;
+		const float RingRadius = MinRadius + RadiusStep * i;
+
+		// Scale points based on the ring's circumference ratio
+		int32 PointsAmount = MinPoints;
+		if (i > 0 && MinRadius > 0.f)
+		{
+			const float CircumferenceRatio = RingRadius / MinRadius;
+			PointsAmount = FMath::Clamp(FMath::RoundToInt(MinPoints * CircumferenceRatio), MinPoints, MaxPoints);
+		}
+
+		CalculateRingTransform(RingOrigin, PointsAmount, RingRadius, Direction, RingTransforms);
+		OutTransforms.Append(RingTransforms);
+	}
+}
+
 void UTrickyUtilityLibrary::CalculateCylinderTransforms(const FTransform& Origin,
                                                         const int32 RingsAmount,
                                                         const int32 PointsAmount,
@@ -308,7 +356,6 @@ void UTrickyUtilityLibrary::CalculateConcentricArcsTransforms(const FTransform& 
                                                               const EPointDirection Direction,
                                                               TArray<FTransform>& OutTransforms)
 {
-	
 	if (ArcsAmount <= 0 || PointsPerArc <= 0 || MinRadius < 0.f || MaxRadius <= MinRadius)
 	{
 		return;

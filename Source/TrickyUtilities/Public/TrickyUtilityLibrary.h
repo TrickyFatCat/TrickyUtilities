@@ -94,6 +94,17 @@ public:
 	                                               TArray<FTransform>& OutTransforms);
 
 	UFUNCTION(BlueprintCallable, Category="TrickyUtilities")
+	static void CalculateDynamicConcentricRingsTransforms(const FTransform& Origin,
+	                                                      const int32 RingsAmount,
+	                                                      const int32 MinPoints,
+	                                                      const int32 MaxPoints,
+	                                                      const float MinRadius,
+	                                                      const float MaxRadius,
+	                                                      const float RingDeltaAngle,
+	                                                      const EPointDirection Direction,
+	                                                      TArray<FTransform>& OutTransforms);
+
+	UFUNCTION(BlueprintCallable, Category="TrickyUtilities")
 	static void CalculateCylinderTransforms(const FTransform& Origin,
 	                                        const int32 RingsAmount,
 	                                        const int32 PointsAmount,
