@@ -350,7 +350,7 @@ void UTrickyUtilityLibrary::CalculateSphereTransforms(const FTransform& Origin,
 		CalculatePointRotation(Origin, NewTransform, Direction, PointRotation);
 		NewTransform.SetRotation(PointRotation.Quaternion());
 
-		OutTransforms.Add(NewTransform);
+		OutTransforms.Emplace(NewTransform);
 	}
 }
 
