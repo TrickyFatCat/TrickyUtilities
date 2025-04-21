@@ -205,10 +205,10 @@ void UTrickyUtilityLibrary::CalculateConcentricRingsTransforms(const FTransform&
 		const FMatrix RotationMatrix = FRotationMatrix::MakeFromXZ(XAxis, OriginUpVector);
 		const FRotator PointRotation = RotationMatrix.Rotator();
 		RingOrigin.SetRotation(PointRotation.Quaternion());
-		
+
 		TArray<FTransform> RingTransforms;
 		const float RingRadius = MinRadius + RadiusStep * i;
-		CalculateRingTransform(Origin, PointsPerRing, RingRadius, Direction, RingTransforms);
+		CalculateRingTransform(RingOrigin, PointsPerRing, RingRadius, Direction, RingTransforms);
 		OutTransforms.Append(RingTransforms);
 	}
 }
@@ -296,6 +296,36 @@ void UTrickyUtilityLibrary::CalculateArcTransforms(const FTransform& Origin,
 		NewTransform.SetRotation(PointRotation.Quaternion());
 
 		OutTransforms.Emplace(NewTransform);
+	}
+}
+
+void UTrickyUtilityLibrary::CalculateConcentricArcsTransforms(const FTransform& Origin,
+                                                              const int32 ArcsAmount,
+                                                              const int32 PointsPerArc,
+                                                              const float MinRadius,
+                                                              const float MaxRadius,
+                                                              const float AngleDeg,
+                                                              const EPointDirection Direction,
+                                                              TArray<FTransform>& OutTransforms)
+{
+	
+	if (ArcsAmount <= 0 || PointsPerArc <= 0 || MinRadius < 0.f || MaxRadius <= MinRadius)
+	{
+		return;
+	}
+
+	if (OutTransforms.Num() > 0)
+	{
+		OutTransforms.Empty();
+	}
+
+	const float RadiusStep = (MaxRadius - MinRadius) / (ArcsAmount - 1);
+	for (int32 i = 0; i < ArcsAmount; ++i)
+	{
+		TArray<FTransform> RingTransforms;
+		const float ArcRadius = MinRadius + RadiusStep * i;
+		CalculateArcTransforms(Origin, PointsPerArc, ArcRadius, AngleDeg, Direction, RingTransforms);
+		OutTransforms.Append(RingTransforms);
 	}
 }
 
