@@ -256,7 +256,7 @@ void UTrickyUtilityLibrary::CalculateArcTransforms(const FTransform& Origin,
 		FRotator PointRotation = FRotator::ZeroRotator;
 		CalculatePointRotation(ArcOrigin, NewTransform, Direction, PointRotation);
 		NewTransform.SetRotation(PointRotation.Quaternion());
-		
+
 		OutTransforms.Emplace(NewTransform);
 	}
 }
@@ -345,6 +345,44 @@ void UTrickyUtilityLibrary::CalculateSphereTransforms(const FTransform& Origin,
 		Location *= Radius;
 		Location = Origin.TransformPosition(Location);
 		NewTransform.SetLocation(Location);
+
+		FRotator PointRotation = FRotator::ZeroRotator;
+		CalculatePointRotation(Origin, NewTransform, Direction, PointRotation);
+		NewTransform.SetRotation(PointRotation.Quaternion());
+
+		OutTransforms.Emplace(NewTransform);
+	}
+}
+
+void UTrickyUtilityLibrary::CalculateSunFlowerTransforms(const FTransform& Origin,
+                                                         const float Radius,
+                                                         const int32 PointsAmount,
+                                                         const EPointDirection Direction,
+                                                         TArray<FTransform>& OutTransforms)
+{
+	if (PointsAmount <= 0 || Radius < 0.f)
+	{
+		return;
+	}
+
+	if (OutTransforms.Num() > 0)
+	{
+		OutTransforms.Empty();
+	}
+
+	const float GoldenAngle = PI * (3.0f - FMath::Sqrt(5.0f));
+	FTransform NewTransform = FTransform::Identity;
+
+	for (int32 i = 0; i < PointsAmount; ++i)
+	{
+		const float PointRadius = Radius * FMath::Sqrt(static_cast<float>(i) / static_cast<float>(PointsAmount));
+		const float Angle = i * GoldenAngle;
+
+		FVector NewLocation = FVector::ZeroVector;
+		NewLocation.X = PointRadius * FMath::Cos(Angle);
+		NewLocation.Y = PointRadius * FMath::Sin(Angle);
+		NewTransform.SetLocation(NewLocation);
+		NewTransform *= Origin;
 
 		FRotator PointRotation = FRotator::ZeroRotator;
 		CalculatePointRotation(Origin, NewTransform, Direction, PointRotation);

@@ -122,6 +122,13 @@ public:
 	                                      const EPointDirection Direction,
 	                                      TArray<FTransform>& OutTransforms);
 
+	UFUNCTION(BlueprintCallable, Category="TrickyUtilities")
+	static void CalculateSunFlowerTransforms(const FTransform& Origin,
+	                                         const float Radius,
+	                                         const int32 PointsAmount,
+	                                         const EPointDirection Direction,
+	                                         TArray<FTransform>& OutTransforms);
+
 private:
 	static void CalculatePointRotation(const FTransform& Origin,
 	                                   const FTransform& Point,
