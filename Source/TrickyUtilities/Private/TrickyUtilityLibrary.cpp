@@ -80,12 +80,11 @@ void UTrickyUtilityLibrary::CalculateGridTransforms(const FTransform& Origin,
                                                     const FVector2D& CellSize,
                                                     TArray<FTransform>& OutTransforms)
 {
-	if (OutTransforms.Num() > 0)
+	if (SizeX <= 0 || SizeY <= 0 || CellSize.X <= 0.f || CellSize.Y <= 0.f)
 	{
-		OutTransforms.Empty();
+		return;
 	}
-
-	const FVector OriginLocation = Origin.GetLocation();
+	
 	const FVector OriginFwdVec = Origin.GetRotation().GetForwardVector();
 	const FVector OriginRightVec = Origin.GetRotation().GetRightVector();
 
@@ -111,12 +110,11 @@ void UTrickyUtilityLibrary::CalculateCubeTransforms(const FTransform& Origin,
                                                     const FVector& CellSize,
                                                     TArray<FTransform>& OutTransforms)
 {
-	if (OutTransforms.Num() > 0)
+	if (SizeX <= 0 || SizeY <= 0 || SizeZ <= 0 || CellSize.X <= 0.f || CellSize.Y <= 0.f || CellSize.Z <= 0.f)
 	{
-		OutTransforms.Empty();
+		return;
 	}
-
-	const FVector OriginLocation = Origin.GetLocation();
+	
 	const FVector OriginFwdVec = Origin.GetRotation().GetForwardVector();
 	const FVector OriginRightVec = Origin.GetRotation().GetRightVector();
 	const FVector OriginUpVec = Origin.GetRotation().GetUpVector();
@@ -149,11 +147,6 @@ void UTrickyUtilityLibrary::CalculateRingTransform(const FTransform& Origin,
 	if (PointsAmount <= 0 || Radius < 0.f)
 	{
 		return;
-	}
-
-	if (OutTransforms.Num() > 0)
-	{
-		OutTransforms.Empty();
 	}
 
 	const float Theta = (2.f * PI) / PointsAmount;
@@ -190,11 +183,6 @@ void UTrickyUtilityLibrary::CalculateConcentricRingsTransforms(const FTransform&
 		return;
 	}
 
-	if (OutTransforms.Num() > 0)
-	{
-		OutTransforms.Empty();
-	}
-
 	const float RadiusStep = (MaxRadius - MinRadius) / (RingsAmount - 1);
 	FTransform RingOrigin = Origin;
 	const FVector OriginFwdVector = RingOrigin.GetRotation().GetForwardVector();
@@ -207,8 +195,9 @@ void UTrickyUtilityLibrary::CalculateConcentricRingsTransforms(const FTransform&
 		const FRotator PointRotation = RotationMatrix.Rotator();
 		RingOrigin.SetRotation(PointRotation.Quaternion());
 
-		TArray<FTransform> RingTransforms;
 		const float RingRadius = MinRadius + RadiusStep * i;
+		
+		TArray<FTransform> RingTransforms;
 		CalculateRingTransform(RingOrigin, PointsPerRing, RingRadius, Direction, RingTransforms);
 		OutTransforms.Append(RingTransforms);
 	}
@@ -227,11 +216,6 @@ void UTrickyUtilityLibrary::CalculateDynamicConcentricRingsTransforms(const FTra
 	if (RingsAmount <= 0 || MinPoints <= 0 || MaxPoints <= MinPoints || MinRadius < 0.f || MaxRadius <= MinRadius)
 	{
 		return;
-	}
-
-	if (OutTransforms.Num() > 0)
-	{
-		OutTransforms.Empty();
 	}
 
 	const float RadiusStep = (MaxRadius - MinRadius) / (RingsAmount - 1);
@@ -275,11 +259,6 @@ void UTrickyUtilityLibrary::CalculateCylinderTransforms(const FTransform& Origin
 		return;
 	}
 
-	if (OutTransforms.Num() > 0)
-	{
-		OutTransforms.Empty();
-	}
-
 	FTransform RingOrigin = Origin;
 	const FVector OriginLocation = RingOrigin.GetLocation();
 	const FVector OriginFwdVector = RingOrigin.GetRotation().GetForwardVector();
@@ -288,12 +267,13 @@ void UTrickyUtilityLibrary::CalculateCylinderTransforms(const FTransform& Origin
 
 	for (int32 i = 0; i < RingsAmount; ++i)
 	{
-		TArray<FTransform> RingTransforms;
 		RingOrigin.SetLocation(OriginLocation + OriginUpVector * RingDisplacement * i);
 		const FVector XAxis = OriginFwdVector.RotateAngleAxis(RingDeltaAngle * i, OriginUpVector);
 		const FMatrix RotationMatrix = FRotationMatrix::MakeFromXZ(XAxis, OriginUpVector);
 		const FRotator PointRotation = RotationMatrix.Rotator();
 		RingOrigin.SetRotation(PointRotation.Quaternion());
+		
+		TArray<FTransform> RingTransforms;
 		CalculateRingTransform(RingOrigin, PointsAmount, Radius, Direction, RingTransforms);
 		OutTransforms.Append(RingTransforms);
 	}
@@ -309,11 +289,6 @@ void UTrickyUtilityLibrary::CalculateArcTransforms(const FTransform& Origin,
 	if (PointsAmount <= 0 || Radius < 0.f || AngleDeg < 0.f)
 	{
 		return;
-	}
-
-	if (OutTransforms.Num() > 0)
-	{
-		OutTransforms.Empty();
 	}
 
 	const float AngleRad = UKismetMathLibrary::DegreesToRadians(AngleDeg);
@@ -361,16 +336,12 @@ void UTrickyUtilityLibrary::CalculateConcentricArcsTransforms(const FTransform& 
 		return;
 	}
 
-	if (OutTransforms.Num() > 0)
-	{
-		OutTransforms.Empty();
-	}
-
 	const float RadiusStep = (MaxRadius - MinRadius) / (ArcsAmount - 1);
 	for (int32 i = 0; i < ArcsAmount; ++i)
 	{
-		TArray<FTransform> RingTransforms;
 		const float ArcRadius = MinRadius + RadiusStep * i;
+		
+		TArray<FTransform> RingTransforms;
 		CalculateArcTransforms(Origin, PointsPerArc, ArcRadius, AngleDeg, Direction, RingTransforms);
 		OutTransforms.Append(RingTransforms);
 	}
@@ -391,15 +362,10 @@ void UTrickyUtilityLibrary::CalculateDynamicConcentricArcsTransforms(const FTran
 		return;
 	}
 
-	if (OutTransforms.Num() > 0)
-	{
-		OutTransforms.Empty();
-	}
-
 	const float RadiusStep = (MaxRadius - MinRadius) / (ArcsAmount - 1);
+	
 	for (int32 i = 0; i < ArcsAmount; ++i)
 	{
-		TArray<FTransform> RingTransforms;
 		const float ArcRadius = MinRadius + RadiusStep * i;
 
 		int32 PointsAmount = MinPoints;
@@ -410,6 +376,7 @@ void UTrickyUtilityLibrary::CalculateDynamicConcentricArcsTransforms(const FTran
 			PointsAmount = FMath::Clamp(FMath::RoundToInt(MinPoints * CircumferenceRatio), MinPoints, MaxPoints);
 		}
 
+		TArray<FTransform> RingTransforms;
 		CalculateArcTransforms(Origin, PointsAmount, ArcRadius, AngleDeg, Direction, RingTransforms);
 		OutTransforms.Append(RingTransforms);
 	}
@@ -429,11 +396,6 @@ void UTrickyUtilityLibrary::CalculateArcCylinderTransforms(const FTransform& Ori
 		return;
 	}
 
-	if (OutTransforms.Num() > 0)
-	{
-		OutTransforms.Empty();
-	}
-
 	FTransform ArcOrigin = Origin;
 	const FVector OriginLocation = ArcOrigin.GetLocation();
 	const FVector OriginUpVector = ArcOrigin.GetRotation().GetUpVector();
@@ -441,8 +403,9 @@ void UTrickyUtilityLibrary::CalculateArcCylinderTransforms(const FTransform& Ori
 
 	for (int32 i = 0; i < ArcsAmount; ++i)
 	{
-		TArray<FTransform> ArcsTransforms;
 		ArcOrigin.SetLocation(OriginLocation + OriginUpVector * ArcDisplacement * i);
+		
+		TArray<FTransform> ArcsTransforms;
 		CalculateArcTransforms(ArcOrigin, PointsAmount, Radius, AngleDeg, Direction, ArcsTransforms);
 		OutTransforms.Append(ArcsTransforms);
 	}
@@ -461,11 +424,6 @@ void UTrickyUtilityLibrary::CalculateSphereTransforms(const FTransform& Origin,
 	if (PointsAmount <= 0 || Radius < 0.f)
 	{
 		return;
-	}
-
-	if (OutTransforms.Num() > 0)
-	{
-		OutTransforms.Empty();
 	}
 
 	const float Phi = PI * (3.f - FMath::Sqrt(5.f));
@@ -517,11 +475,6 @@ void UTrickyUtilityLibrary::CalculateSunFlowerTransforms(const FTransform& Origi
 	if (PointsAmount <= 0 || Radius < 0.f)
 	{
 		return;
-	}
-
-	if (OutTransforms.Num() > 0)
-	{
-		OutTransforms.Empty();
 	}
 
 	const float GoldenAngle = PI * (3.0f - FMath::Sqrt(5.0f));
