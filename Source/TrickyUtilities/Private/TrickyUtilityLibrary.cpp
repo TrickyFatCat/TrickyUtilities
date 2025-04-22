@@ -317,8 +317,8 @@ void UTrickyUtilityLibrary::CalculateArcTransforms(const FTransform& Origin,
 
 	const float AngleRad = UKismetMathLibrary::DegreesToRadians(AngleDeg);
 	const float Theta = AngleRad / (PointsAmount - 1);
+
 	FTransform ArcOrigin = Origin;
-	const FVector OriginLocation = ArcOrigin.GetLocation();
 	const FVector OriginFwdVector = ArcOrigin.GetRotation().GetForwardVector();
 	const FVector OriginUpVector = Origin.GetRotation().GetUpVector();
 
@@ -400,15 +400,15 @@ void UTrickyUtilityLibrary::CalculateDynamicConcentricArcsTransforms(const FTran
 	{
 		TArray<FTransform> RingTransforms;
 		const float ArcRadius = MinRadius + RadiusStep * i;
-		
+
 		int32 PointsAmount = MinPoints;
-		
+
 		if (i > 0 && MinRadius > 0.f)
 		{
 			const float CircumferenceRatio = ArcRadius / MinRadius;
 			PointsAmount = FMath::Clamp(FMath::RoundToInt(MinPoints * CircumferenceRatio), MinPoints, MaxPoints);
 		}
-		
+
 		CalculateArcTransforms(Origin, PointsAmount, ArcRadius, AngleDeg, Direction, RingTransforms);
 		OutTransforms.Append(RingTransforms);
 	}
@@ -433,16 +433,16 @@ void UTrickyUtilityLibrary::CalculateArcCylinderTransforms(const FTransform& Ori
 		OutTransforms.Empty();
 	}
 
-	FTransform RingOrigin = Origin;
-	const FVector OriginLocation = RingOrigin.GetLocation();
-	const FVector OriginUpVector = RingOrigin.GetRotation().GetUpVector();
+	FTransform ArcOrigin = Origin;
+	const FVector OriginLocation = ArcOrigin.GetLocation();
+	const FVector OriginUpVector = ArcOrigin.GetRotation().GetUpVector();
 	const float ArcDisplacement = Height / (ArcsAmount - 1);
 
 	for (int32 i = 0; i < ArcsAmount; ++i)
 	{
 		TArray<FTransform> ArcsTransforms;
-		RingOrigin.SetLocation(OriginLocation + OriginUpVector * ArcDisplacement * i);
-		CalculateArcTransforms(RingOrigin, PointsAmount, Radius, AngleDeg, Direction, ArcsTransforms);
+		ArcOrigin.SetLocation(OriginLocation + OriginUpVector * ArcDisplacement * i);
+		CalculateArcTransforms(ArcOrigin, PointsAmount, Radius, AngleDeg, Direction, ArcsTransforms);
 		OutTransforms.Append(ArcsTransforms);
 	}
 }
