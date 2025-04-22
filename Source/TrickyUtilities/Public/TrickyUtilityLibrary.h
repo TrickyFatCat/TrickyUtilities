@@ -6,6 +6,7 @@
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "TrickyUtilityLibrary.generated.h"
 
+class USplineComponent;
 class UTimelineComponent;
 
 UENUM(BlueprintType)
@@ -171,6 +172,30 @@ public:
 	                                         const int32 PointsAmount,
 	                                         const EPointDirection Direction,
 	                                         TArray<FTransform>& OutTransforms);
+
+	UFUNCTION(BlueprintCallable, Category="TrickyUtilities")
+	static void GetTransformsAlongSplineByPoints(USplineComponent* SplineComponent,
+	                                             const int32 PointsAmount,
+	                                             const bool bUseLocalSpace,
+	                                             TArray<FTransform>& OutTransforms);
+
+	UFUNCTION(BlueprintCallable, Category="TrickyUtilities")
+	static void GetLocationsAlongSplineByPoints(USplineComponent* SplineComponent,
+	                                            const int32 PointsAmount,
+	                                            const bool bUseLocalSpace,
+	                                            TArray<FVector>& OutLocations);
+
+	UFUNCTION(BlueprintCallable, Category="TrickyUtilities")
+	static void GetTransformsAlongSplineByDistance(USplineComponent* SplineComponent,
+	                                               const float Distance,
+	                                               const bool bUseLocalSpace,
+	                                               TArray<FTransform>& OutTransforms);
+
+	UFUNCTION(BlueprintCallable, Category="TrickyUtilities")
+	static void GetLocationsAlongSplineByDistance(USplineComponent* SplineComponent,
+	                                              const float Distance,
+	                                              const bool bUseLocalSpace,
+	                                              TArray<FVector>& OutLocations);
 
 private:
 	static void CalculatePointRotation(const FTransform& Origin,

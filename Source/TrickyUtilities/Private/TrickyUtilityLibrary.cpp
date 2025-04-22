@@ -3,6 +3,7 @@
 
 #include "TrickyUtilityLibrary.h"
 
+#include "Components/SplineComponent.h"
 #include "Components/TimelineComponent.h"
 #include "Kismet/KismetMathLibrary.h"
 
@@ -542,6 +543,104 @@ void UTrickyUtilityLibrary::CalculateSunFlowerTransforms(const FTransform& Origi
 		NewTransform.SetRotation(PointRotation.Quaternion());
 
 		OutTransforms.Emplace(NewTransform);
+	}
+}
+
+void UTrickyUtilityLibrary::GetTransformsAlongSplineByPoints(USplineComponent* SplineComponent,
+                                                             const int32 PointsAmount,
+                                                             const bool bUseLocalSpace,
+                                                             TArray<FTransform>& OutTransforms)
+{
+	if (!IsValid(SplineComponent) || PointsAmount <= 0)
+	{
+		return;
+	}
+
+	const float SplineLength = SplineComponent->GetSplineLength();
+	const float Displacement = SplineLength / (PointsAmount - 1);
+
+	for (int32 i = 0; i < PointsAmount; ++i)
+	{
+		const float Distance = Displacement * i;
+		const ESplineCoordinateSpace::Type CoordinateSpace = bUseLocalSpace
+			                                                     ? ESplineCoordinateSpace::Local
+			                                                     : ESplineCoordinateSpace::World;
+		const FTransform Transform = SplineComponent->GetTransformAtDistanceAlongSpline(Distance, CoordinateSpace);
+		OutTransforms.Emplace(Transform);
+	}
+}
+
+void UTrickyUtilityLibrary::GetLocationsAlongSplineByPoints(USplineComponent* SplineComponent,
+                                                            const int32 PointsAmount,
+                                                            const bool bUseLocalSpace,
+                                                            TArray<FVector>& OutLocations)
+{
+	if (!IsValid(SplineComponent) || PointsAmount <= 0)
+	{
+		return;
+	}
+
+	const float SplineLength = SplineComponent->GetSplineLength();
+	const float Displacement = SplineLength / (PointsAmount - 1);
+	const ESplineCoordinateSpace::Type CoordinateSpace = bUseLocalSpace
+		                                                     ? ESplineCoordinateSpace::Local
+		                                                     : ESplineCoordinateSpace::World;
+
+	for (int32 i = 0; i < PointsAmount; ++i)
+	{
+		const float Distance = Displacement * i;
+		const FVector Location = SplineComponent->GetLocationAtDistanceAlongSpline(Distance, CoordinateSpace);
+		OutLocations.Emplace(Location);
+	}
+}
+
+void UTrickyUtilityLibrary::GetTransformsAlongSplineByDistance(USplineComponent* SplineComponent,
+                                                               const float Distance,
+                                                               const bool bUseLocalSpace,
+                                                               TArray<FTransform>& OutTransforms)
+{
+	if (!IsValid(SplineComponent) || Distance <= 0.f)
+	{
+		return;
+	}
+
+	const float SplineLength = SplineComponent->GetSplineLength();
+	const float PointsAmount = SplineLength / Distance;
+	const float HalfDistance = Distance * 0.5f;
+	const ESplineCoordinateSpace::Type CoordinateSpace = bUseLocalSpace
+		                                                     ? ESplineCoordinateSpace::Local
+		                                                     : ESplineCoordinateSpace::World;
+
+	for (int32 i = 0; i < PointsAmount; ++i)
+	{
+		const float SplineDistance = (Distance * i) + HalfDistance;
+		const FTransform Transform = SplineComponent->GetTransformAtDistanceAlongSpline(SplineDistance, CoordinateSpace);
+		OutTransforms.Emplace(Transform);
+	}
+}
+
+void UTrickyUtilityLibrary::GetLocationsAlongSplineByDistance(USplineComponent* SplineComponent,
+                                                              const float Distance,
+                                                              const bool bUseLocalSpace,
+                                                              TArray<FVector>& OutLocations)
+{
+	if (!IsValid(SplineComponent) || Distance <= 0.f)
+	{
+		return;
+	}
+
+	const float SplineLength = SplineComponent->GetSplineLength();
+	const float PointsAmount = SplineLength / Distance;
+	const float HalfDistance = Distance * 0.5f;
+	const ESplineCoordinateSpace::Type CoordinateSpace = bUseLocalSpace
+		                                                     ? ESplineCoordinateSpace::Local
+		                                                     : ESplineCoordinateSpace::World;
+
+	for (int32 i = 0; i < PointsAmount; ++i)
+	{
+		const float SplineDistance = (Distance * i) + HalfDistance;
+		const FVector Location = SplineComponent->GetLocationAtDistanceAlongSpline(SplineDistance, CoordinateSpace);
+		OutLocations.Emplace(Location);
 	}
 }
 
