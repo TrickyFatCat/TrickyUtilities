@@ -247,14 +247,14 @@ void UTrickyUtilityLibrary::CalculateDynamicConcentricRingsTransforms(const FTra
 
 void UTrickyUtilityLibrary::CalculateCylinderTransforms(const FTransform& Origin,
                                                         const int32 RingsAmount,
-                                                        const int32 PointsAmount,
+                                                        const int32 PointsPerRing,
                                                         const float Radius,
                                                         const float Height,
                                                         const float RingDeltaAngle,
                                                         const EPointDirection Direction,
                                                         TArray<FTransform>& OutTransforms)
 {
-	if (RingsAmount <= 0 || PointsAmount <= 0 || Radius < 0.f || Height < 0.f)
+	if (RingsAmount <= 0 || PointsPerRing <= 0 || Radius < 0.f || Height < 0.f)
 	{
 		return;
 	}
@@ -274,7 +274,7 @@ void UTrickyUtilityLibrary::CalculateCylinderTransforms(const FTransform& Origin
 		RingOrigin.SetRotation(PointRotation.Quaternion());
 		
 		TArray<FTransform> RingTransforms;
-		CalculateRingTransform(RingOrigin, PointsAmount, Radius, Direction, RingTransforms);
+		CalculateRingTransform(RingOrigin, PointsPerRing, Radius, Direction, RingTransforms);
 		OutTransforms.Append(RingTransforms);
 	}
 }
@@ -384,14 +384,14 @@ void UTrickyUtilityLibrary::CalculateDynamicConcentricArcsTransforms(const FTran
 
 void UTrickyUtilityLibrary::CalculateArcCylinderTransforms(const FTransform& Origin,
                                                            const int32 ArcsAmount,
-                                                           const int32 PointsAmount,
+                                                           const int32 PointsPerArc,
                                                            const float Radius,
                                                            const float Height,
                                                            const float AngleDeg,
                                                            const EPointDirection Direction,
                                                            TArray<FTransform>& OutTransforms)
 {
-	if (ArcsAmount <= 0 || PointsAmount <= 0 || Radius < 0.f || Height < 0.f)
+	if (ArcsAmount <= 0 || PointsPerArc <= 0 || Radius < 0.f || Height < 0.f)
 	{
 		return;
 	}
@@ -406,7 +406,7 @@ void UTrickyUtilityLibrary::CalculateArcCylinderTransforms(const FTransform& Ori
 		ArcOrigin.SetLocation(OriginLocation + OriginUpVector * ArcDisplacement * i);
 		
 		TArray<FTransform> ArcsTransforms;
-		CalculateArcTransforms(ArcOrigin, PointsAmount, Radius, AngleDeg, Direction, ArcsTransforms);
+		CalculateArcTransforms(ArcOrigin, PointsPerArc, Radius, AngleDeg, Direction, ArcsTransforms);
 		OutTransforms.Append(ArcsTransforms);
 	}
 }
