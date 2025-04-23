@@ -2,7 +2,7 @@
 
 
 #include "Actors/TrickyAnnotationActor.h"
-
+#include "Components/StaticMeshComponent.h"
 #include "Components/TextRenderComponent.h"
 
 
