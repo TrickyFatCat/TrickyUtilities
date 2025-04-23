@@ -26,7 +26,7 @@ void UTrickyUtilityLibrary::CalculateTimelinePlayRate(UTimelineComponent* Timeli
 }
 
 void UTrickyUtilityLibrary::FormatTimeSeconds(const float TimeSeconds,
-                                              const ETimeFormat TimeFormat,
+                                              const EStringTimeFormat TimeFormat,
                                               FString& OutResult)
 {
 	const FTimespan Timespan = UKismetMathLibrary::FromSeconds(TimeSeconds);
@@ -42,33 +42,33 @@ void UTrickyUtilityLibrary::FormatTimeSeconds(const float TimeSeconds,
 
 	switch (TimeFormat)
 	{
-	case ETimeFormat::MM_SS_MsMs:
+	case EStringTimeFormat::MM_SS_MsMs:
 		OutResult = FString::Printf(TEXT("%02d:%02d.%02d"),
 		                            TotalMinutes,
 		                            Seconds,
 		                            ConvertMilliseconds(0.1f));
 		break;
 
-	case ETimeFormat::MM_SS_Ms:
+	case EStringTimeFormat::MM_SS_Ms:
 		OutResult = FString::Printf(TEXT("%02d:%02d.%d"),
 		                            TotalMinutes,
 		                            Seconds,
 		                            ConvertMilliseconds(0.01f));
 		break;
 
-	case ETimeFormat::MM_SS:
+	case EStringTimeFormat::MM_SS:
 		OutResult = FString::Printf(TEXT("%02d:%02d"), TotalMinutes, Seconds);
 		break;
 
-	case ETimeFormat::SS_MsMs:
+	case EStringTimeFormat::SS_MsMs:
 		OutResult = FString::Printf(TEXT("%02d.%02d"), TotalSeconds, ConvertMilliseconds(0.1f));
 		break;
 
-	case ETimeFormat::SS_Ms:
+	case EStringTimeFormat::SS_Ms:
 		OutResult = FString::Printf(TEXT("%02d.%d"), TotalSeconds, ConvertMilliseconds(0.01f));
 		break;
 
-	case ETimeFormat::SS:
+	case EStringTimeFormat::SS:
 		OutResult = FString::Printf(TEXT("%02d"), TotalSeconds);
 		break;
 	}

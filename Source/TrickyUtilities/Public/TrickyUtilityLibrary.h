@@ -10,7 +10,7 @@ class USplineComponent;
 class UTimelineComponent;
 
 UENUM(BlueprintType)
-enum class ETimeFormat : uint8
+enum class EStringTimeFormat : uint8
 {
 	MM_SS_MsMs UMETA(DisplayName="MM:SS.MsMs"),
 	MM_SS_Ms UMETA(DisplayName="MM:SS.Ms"),
@@ -56,7 +56,7 @@ public:
 	 * @param OutResult A reference to a string where the formatted time will be stored.
 	 */
 	UFUNCTION(BlueprintPure, Category="TrickyUtilities")
-	static void FormatTimeSeconds(const float TimeSeconds, const ETimeFormat TimeFormat, FString& OutResult);
+	static void FormatTimeSeconds(const float TimeSeconds, const EStringTimeFormat TimeFormat, FString& OutResult);
 
 	/**
 	 * Calculates a grid of transforms based on an origin transform, grid size, and cell size.
