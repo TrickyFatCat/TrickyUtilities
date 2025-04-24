@@ -4,6 +4,9 @@
 #include "Actors/TrickyAnnotationActor.h"
 #include "Components/StaticMeshComponent.h"
 #include "Components/TextRenderComponent.h"
+#include "UObject/ConstructorHelpers.h"
+#include "Materials/MaterialInterface.h"
+#include "Engine/StaticMesh.h"
 
 
 ATrickyAnnotationActor::ATrickyAnnotationActor()
@@ -23,30 +26,16 @@ ATrickyAnnotationActor::ATrickyAnnotationActor()
 
 	if (FrontMeshComponent && BackMeshComponent)
 	{
-		struct FMeshConstructorStatics
-		{
-			ConstructorHelpers::FObjectFinder<UStaticMesh> StaticMesh;
-			FName ID_Misc;
-			FText NAME_Misc;
-
-			FMeshConstructorStatics()
-				: StaticMesh(TEXT("/Engine/BasicShapes/Plane"))
-				  , ID_Misc(TEXT("Misc"))
-				  , NAME_Misc(NSLOCTEXT("StaticMeshCategory", "Misc", "Misc"))
-			{
-			}
-		};
-
-		static FMeshConstructorStatics ConstructorStatics;
+		UStaticMesh* StaticMesh = LoadObject<UStaticMesh>(this, TEXT("/Engine/BasicShapes/Plane"));
 		UMaterialInterface* Material = LoadObject<UMaterialInterface>(
 			this, TEXT("/Engine/EngineDebugMaterials/BlackUnlitMaterial"));
 
-		FrontMeshComponent->SetStaticMesh(ConstructorStatics.StaticMesh.Object);
+		FrontMeshComponent->SetStaticMesh(StaticMesh);
 		FrontMeshComponent->SetMaterial(0, Material);
 		FrontMeshComponent->SetRelativeLocation(FVector(1, 0, 0));
 		FrontMeshComponent->SetRelativeRotation(FRotator(-90, 0, 0));
 
-		BackMeshComponent->SetStaticMesh(ConstructorStatics.StaticMesh.Object);
+		BackMeshComponent->SetStaticMesh(StaticMesh);
 		BackMeshComponent->SetMaterial(0, Material);
 		BackMeshComponent->SetRelativeLocation(FVector(-1, 0, 0));
 		BackMeshComponent->AddRelativeRotation(FRotator(90, 0, 0));
@@ -156,7 +145,7 @@ void ATrickyAnnotationActor::UpdateTextProperties(UTextRenderComponent* Componen
 	Component->SetVerticalAlignment(VerticalAlignment);
 	Component->SetHorizontalAlignment(HorizontalAlignment);
 
-	if (IsValid(Material))
+	if (Material != nullptr)
 	{
 		Component->SetTextMaterial(Material);
 	}
