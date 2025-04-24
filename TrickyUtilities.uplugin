@@ -3,7 +3,7 @@
 	"Version": 1,
 	"VersionName": "3.55.0",
 	"FriendlyName": "TrickyUtilities",
-	"Description": "",
+	"Description": "Provides a collection of useful actors and functions, which facilitate prototyping.",
 	"Category": "Tricky Prototyping",
 	"CreatedBy": "Artyom \"Tricky_Fat_Cat\" Volkov",
 	"CreatedByURL": "",
