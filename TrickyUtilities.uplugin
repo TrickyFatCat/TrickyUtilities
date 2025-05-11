@@ -1,7 +1,7 @@
 {
 	"FileVersion": 3,
-	"Version": 1,
-	"VersionName": "3.55.0",
+	"Version": 2,
+	"VersionName": "3.55.1",
 	"FriendlyName": "TrickyUtilities",
 	"Description": "Provides a collection of useful actors and functions, which facilitate prototyping.",
 	"Category": "Tricky Prototyping",
